@@ -16,22 +16,33 @@ func count(s string) string {
 	var esc bool = false
 
 	for _, l := range s {
-		if unicode.IsLetter(l) {
+
+		if unicode.IsLetter(l) && esc == false {
 			r = l
+			b.WriteRune(l)
 		}
-		if l == '\\' {
+		if l == '\\' && esc == true {
+			r = l
+			esc = false
+			b.WriteRune(l)
+		}
+		if l == '\\' && r != l {
 			esc = true
 		}
-		if unicode.IsNumber(l) && !esc {
-			if r != 0 {
+
+		if unicode.IsNumber(l) {
+			if r != 0 && esc == false {
 				c := int(l - '0')
 				for i := 1; i < c; i++ {
 					b.WriteRune(r)
 				}
 			}
+			if esc == true {
+				r = l
+				b.WriteRune(r)
+				esc = false
+			}
 
-		} else {
-			b.WriteRune(l)
 		}
 	}
 	return b.String()
