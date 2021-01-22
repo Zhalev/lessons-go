@@ -1,11 +1,12 @@
 package hw_2
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 )
 
-func topWords(text string) (res map[string]int) {
+func getTop10Words(text string) (res map[string]int) {
 
 	type Words struct {
 		Name  string
@@ -32,6 +33,7 @@ func topWords(text string) (res map[string]int) {
 		return aa[i].Count > aa[j].Count
 	})
 	aa = aa[:10]
+	fmt.Printf("%v", aa)
 	res = make(map[string]int, len(aa))
 
 	for _, v := range aa {

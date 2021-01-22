@@ -20,12 +20,12 @@ func TestCount(t *testing.T) {
 		"df":   1,
 	}
 
-	if l := topWords(str); reflect.DeepEqual(l, res) == false {
-		t.Fatalf("Text: %s: Result: %v; Expected: %v", str, l, res)
+	if l := getTop10Words(str); reflect.DeepEqual(l, res) == false {
+		t.Fatalf("Text: %s: Result: %v; Expected: %v;", str, l, res)
 	}
 
-	if l := topWords(str); l["adf"] == 5 {
-		t.Fatalf("Text: %s: Result: %v; Expected: %v", str, l["adf"], 5)
+	if l := getTop10Words(str); l["adf"] != 5 {
+		t.Fatalf("Text: %s: Result: %v; Expected: %v;", str, l["adf"], 5)
 	}
 
 }
