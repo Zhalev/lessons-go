@@ -1,25 +1,43 @@
 package hw_4
 
 import (
+	"flag"
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"path"
 )
 
-func main() {
-	getFile("../hw-1")
+var (
+	e   string
+	p   string
+	arg []string
+)
+
+func init() {
+	flag.StringVar(&e, "e", "", "directory environment files")
+	flag.StringVar(&p, "p", "", "program or cmd")
+	arg = flag.Args()
 }
 
-func getFile(pathy string) {
-	dir, _ := path.Split(pathy)
+func main() {
+
+	flag.Parse()
+
+}
+
+func readDir(dir string) (map[string]string, error) {
+	ms := make(map[string]string)
+	dir, _ = path.Split(dir)
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		log.Fatal(err)
+		return nil, err
 	}
 
 	for _, file := range files {
-		//fmt.Println(file.Name(), file.IsDir())
+		// fmt.Println(file.Name(), file.IsDir())
 		if file.IsDir() == true {
 			continue
 		}
@@ -30,7 +48,15 @@ func getFile(pathy string) {
 		}
 		val := string(b)
 		if len(val) > 0 {
+			ms[fn] = val
 			os.Setenv(fn, val)
 		}
 	}
+	return ms, nil
+}
+func RunCmd(cmd []string, env map[string]string) int {
+
+	exec.Command("prog")
+	return 1
+
 }
