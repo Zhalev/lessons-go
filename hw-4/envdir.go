@@ -4,9 +4,9 @@ import (
 	"flag"
 	"io/ioutil"
 	"log"
-	"os"
 	"os/exec"
 	"path"
+	"strings"
 )
 
 var (
@@ -22,12 +22,20 @@ func init() {
 }
 
 func main() {
-
 	flag.Parse()
-
+	if len(e) > 0 {
+		envy := make(map[string]string)
+		envy, err := ReadDir(e)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if len(p) > 0 {
+			RunCmd(p, arg, envy)
+		}
+	}
 }
 
-func readDir(dir string) (map[string]string, error) {
+func ReadDir(dir string) (map[string]string, error) {
 	ms := make(map[string]string)
 	dir, _ = path.Split(dir)
 	files, err := ioutil.ReadDir(dir)
@@ -42,21 +50,34 @@ func readDir(dir string) (map[string]string, error) {
 			continue
 		}
 		fn := file.Name()
-		b, _ := ioutil.ReadFile(path.Join(dir, file.Name()))
+		b, _ := ioutil.ReadFile(path.Join(dir, fn))
 		if err != nil {
 			log.Fatal(err)
 		}
-		val := string(b)
-		if len(val) > 0 {
-			ms[fn] = val
-			os.Setenv(fn, val)
+		lines := strings.Split(string(b), "\n")
+		ls := strings.LastIndex(fn, ".")
+		fn = string([]rune(fn)[:ls])
+		if len(lines[0]) > 0 {
+			ms[fn] = lines[0]
+			//os.Setenv(fn, val)
 		}
 	}
 	return ms, nil
 }
-func RunCmd(cmd []string, env map[string]string) int {
-
-	exec.Command("prog")
-	return 1
+func RunCmd(prog string, args []string, env map[string]string) int {
+	i := 0
+	cmd := exec.Command(prog)
+	cmd.Args = args
+	envy := []string{}
+	for k, en := range env {
+		envy = append(envy, k+"="+en)
+		i++
+	}
+	cmd.Env = envy
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return i
 
 }
