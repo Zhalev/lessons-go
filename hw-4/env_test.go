@@ -1,4 +1,4 @@
-package hw_4
+package main
 
 import (
 	"reflect"

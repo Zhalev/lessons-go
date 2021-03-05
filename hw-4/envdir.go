@@ -1,7 +1,8 @@
-package hw_4
+package main
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os/exec"
@@ -53,6 +54,7 @@ func ReadDir(dir string) (map[string]string, error) {
 		b, _ := ioutil.ReadFile(path.Join(dir, fn))
 		if err != nil {
 			log.Fatal(err)
+			return nil, err
 		}
 		lines := strings.Split(string(b), "\n")
 		ls := strings.LastIndex(fn, ".")
@@ -65,19 +67,24 @@ func ReadDir(dir string) (map[string]string, error) {
 	return ms, nil
 }
 func RunCmd(prog string, args []string, env map[string]string) int {
+	//str1 := fmt.Errorf("%s/n" ,"Ашипка" )
+	//fmt.Println(str1)
+	//return 1
 	i := 0
 	cmd := exec.Command(prog)
 	cmd.Args = args
 	envy := []string{}
 	for k, en := range env {
+		fmt.Println(k, en)
 		envy = append(envy, k+"="+en)
 		i++
 	}
 	cmd.Env = envy
-	err := cmd.Run()
+	std, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Printf("%s\n", std)
 	return i
 
 }
